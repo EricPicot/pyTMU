@@ -1,14 +1,6 @@
 import random
-
 import numpy as np
 import tensorflow as tf
-
-r = random.randint(0,490)
-data = np.load("tf_dataset/data/training_data-14.npy")[r:r+2]
-
-data_path = "tf_dataset/data/training_data-1.npy"
-target_path = "tf_dataset/target/target_data-1.npy"
-
 
 def read_image(path):
     tf_content = np.load(path, allow_pickle=True)
@@ -26,6 +18,7 @@ def resize_and_scale_gray(tf_image):
     # """
     tf_image_resized = tf.image.resize(tf_image, (270, 480))
     tf_image_resized = tf.reshape(tf_image_resized, (-1, 270, 480, 3))
+#     print("before enhancement")
     # Random Brightness
     tf_image = tf.image.random_brightness(tf_image_resized, max_delta=random.uniform(0, 1))
     # Random Saturation
@@ -33,11 +26,38 @@ def resize_and_scale_gray(tf_image):
     # Random Contrast
     tf_image = tf.image.random_contrast(tf_image, lower=0.5, upper=1.5)
     tf_image = tf.image.convert_image_dtype(tf_image, dtype=tf.float32)
-
+#     print("before gray scaling")
     tf_image_gray = tf.image.rgb_to_grayscale(tf_image)
+#     print("before sobel")
     tf_image_gray = tf.image.sobel_edges(tf_image_gray)
     tf_image = tf.squeeze(tf_image_gray)
-    return tf.where(tf_image > 0.3, tf.ones_like(tf_image), tf.zeros_like(tf_image))
+#     print("after sobel")
+    return tf.where(tf_image > 0.4, tf.ones_like(tf_image), tf.zeros_like(tf_image))
+
+
+def flipping_target(target):
+    target = np.array(target)
+    for i,t in enumerate(target):
+        t = np.array(t)
+        argmax = t.argmax()
+        if argmax in [2,4,6]:
+            target[i][argmax+1] = 1
+            target[i][argmax] = 0
+        elif argmax in [3,5,7]:
+            target[i][argmax-1] = 1
+            target[i][argmax] = 0
+    return target
+            
+            
+    
+# def flipping_action(target):
+def flipping_tensor(tf_image):
+    """
+    flipping the image to double the size of the dataset and to balanced a bit more the dataset regarding turns
+    """
+    tf_image = tf.concat([tf_image, tf.image.flip_left_right(tf_image)], axis = 0)
+    return tf_image
+
 
 def process_image(image):
 
@@ -60,6 +80,7 @@ def process(data_path):
         im_tensor, offset_height=120, offset_width=0, target_height=150, target_width=480
     )
     im_tensor = tf.image.resize(im_tensor, (270, 480))
+    im_tensor = flipping_tensor(im_tensor)
 
     return tf.reshape(im_tensor[:, :, :, 0], (-1, 270, 480, 1))
 
@@ -76,4 +97,3 @@ def process(data_path):
 # # plt.subplot(2,2,2)
 # # plt.imshow(im_transformed[0, :, :, 1].numpy().reshape((270, 480)))
 #
-# plt.show()
