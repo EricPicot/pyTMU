@@ -5,7 +5,7 @@ import numpy as np
 data_path = './tf_dataset/data/'
 target_path = './tf_dataset/target/'
 
-num_datasets = 9
+num_datasets = 7
 index = 0
 
 # samplig factors
@@ -17,7 +17,7 @@ target_final = []
 
 
 
-starting_value = 1
+starting_value = 10
 
 while True:
     file_name = './tf_dataset/balanced_data/data_balanced_{}.npy'.format(starting_value)
@@ -50,8 +50,8 @@ for data_part in range(1, num_datasets + 1):
     nothing = []
     shape = []
 
-    data_temp = np.load(data_path + 'training_data-{}.npy'.format(data_part))
-    target_temp = np.load(target_path + 'target_data-{}.npy'.format(data_part))
+    data_temp = np.load(data_path + 'training_data-{}.npy'.format(starting_value + data_part))
+    target_temp = np.load(target_path + 'target_data-{}.npy'.format(starting_value + data_part))
     #
     # shape += len(target)
     for i, t in enumerate(target_temp):
