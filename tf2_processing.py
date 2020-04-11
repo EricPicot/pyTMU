@@ -3,9 +3,6 @@ import random
 import numpy as np
 import tensorflow as tf
 
-r = random.randint(0,490)
-data = np.load("tf_dataset/data/training_data-14.npy")[r:r+2]
-
 data_path = "tf_dataset/data/training_data-1.npy"
 target_path = "tf_dataset/target/target_data-1.npy"
 
