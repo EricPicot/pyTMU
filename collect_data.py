@@ -1,21 +1,9 @@
 import os
 import time
-
 import cv2
 import numpy as np
+from utils import key_check, grab_screen, keys_to_output
 
-from getkeys import key_check
-from grabscreen import grab_screen
-
-up = [1, 0, 0, 0, 0, 0, 0, 0, 0]
-down = [0, 1, 0, 0, 0, 0, 0, 0, 0]
-right = [0, 0, 1, 0, 0, 0, 0, 0, 0]
-left = [0, 0, 0, 1, 0, 0, 0, 0, 0]
-up_right = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-up_left = [0, 0, 0, 0, 0, 1, 0, 0, 0]
-down_right = [0, 0, 0, 0, 0, 0, 1, 0, 0]
-down_left = [0, 0, 0, 0, 0, 0, 0, 1, 0]
-nothing = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 
 starting_value = 1
 
@@ -31,35 +19,7 @@ while True:
 
         break
 
-
-def keys_to_output(keys):
-    '''
-    Convert keys to a ...multi-hot... array
-     0  1  2  3  4   5   6   7    8
-    [W, S, A, D, WA, WD, SA, SD, NOKEY] boolean values.
-    '''
-    output = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    if 'up' in keys:
-        output = up
-    elif 'down' in keys:
-        output = down
-    elif 'right' in keys:
-        output = right
-    elif 'left' in keys:
-        output = left
-    elif 'right+down' in keys:
-        output = down_right
-    elif 'right+up' in keys:
-        output = up_right
-    elif 'left+down' in keys:
-        output = down_left
-    elif 'left+up' in keys:
-        output = up_left
-    else:
-        output = nothing
-    return output
-
-
+        
 def main(file_name, target_file_name, starting_value):
     file_name = file_name
     target_file_name = target_file_name
@@ -100,17 +60,6 @@ def main(file_name, target_file_name, starting_value):
                     starting_value += 1
                     file_name = './tf_dataset/data/training_data-{}.npy'.format(starting_value)
                     target_file_name = './tf_dataset/target/target_data-{}.npy'.format(starting_value)
-
-        keys = key_check()
-        if 'T' in keys:
-            if paused:
-                paused = False
-                print('unpaused!')
-                time.sleep(1)
-            else:
-                print('Pausing!')
-                paused = True
-                time.sleep(1)
 
 
 main(file_name, target_file_name, starting_value)
