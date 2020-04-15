@@ -3,7 +3,8 @@ import keyboard as kb
 import cv2
 import numpy as np
 from PIL import ImageGrab
-
+import tf2_processing
+import tensorflow as tf
 
 up = [1, 0, 0, 0, 0, 0, 0, 0, 0]
 down = [0, 1, 0, 0, 0, 0, 0, 0, 0]
@@ -17,15 +18,10 @@ nothing = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 
 
 def grab_screen(region=None):
+    image = np.array(ImageGrab.grab(bbox=region))
 
-    if region:
-            left, top, x2, y2 = region
-            width = x2 - left + 1
-            height = y2 - top + 1
+    return cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
 
-    img = np.array(ImageGrab.grab(bbox=(0, 40, 800, 600)))
-
-    return cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
 
 def key_check():
     key_list = []
@@ -60,6 +56,7 @@ def prediction_to_keys(prediction):
     print(prediction, output)
     return output
 
+
 def keys_to_output(keys):
     '''
     Convert keys to a ...multi-hot... array
@@ -86,3 +83,16 @@ def keys_to_output(keys):
     else:
         output = nothing
     return output
+
+
+def speed_numerisation(image, model):
+    """
+    takes a speed image and return its value in integer
+    """
+    image = np.asarray(image).astype(np.float32) / 255
+
+    first_digit, second_digit, third_digit = tf2_processing.digit_images(image)
+    first = np.argmax(model.predict(np.reshape(first_digit, (1, 30, 20, 1))))
+    second = np.argmax(model.predict(np.reshape(second_digit, (1, 30, 20, 1))))
+    third = np.argmax(model.predict(np.reshape(third_digit, (1, 30, 20, 1))))
+    return first * 100 + second * 10 + third

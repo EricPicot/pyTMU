@@ -21,27 +21,29 @@ augmentation = True
 model = AlexNet()
 model.compile(optimizer="rmsprop", loss="categorical_crossentropy")
 
-
 for e in range(EPOCHS):
     data_order = [i for i in range(0, n_training_set)]
     random.shuffle(data_order)
-    
+
     for count, i in enumerate(data_order):
         try:
             file_name = './tf_dataset/balanced_data/data_balanced_{}.npy'.format(i)
-            train_data = tf2_processing.process(file_name, augmentation=augmentation, flipping_data=True)
+            train_data = tf2_processing.process(file_name,
+                                                resize=(270, 480),
+                                                augmentation=augmentation,
+                                                flipping_data=True)
             target_data = np.load("./tf_dataset/balanced_target/target_balanced_{}.npy".format(i))
-            
+
             if augmentation:
                 target_data = np.concatenate([target_data, tf2_processing.flipping_target(target_data)])
 
-            print("EPOCH ", e,  '  training_data-{}.npy  '.format(i), len(train_data))
-            
-            model.fit(train_data, 
+            print("EPOCH ", e, '  training_data-{}.npy  '.format(i), len(train_data))
+
+            model.fit(train_data,
                       target_data,
-                      epochs=1, 
-                      validation_split=0.1, 
-                      verbose =1, 
+                      epochs=1,
+                      validation_split=0.1,
+                      verbose=1,
                       callbacks=[tensorboard_callback])
 
             if count % 10 == 0:
@@ -49,4 +51,4 @@ for e in range(EPOCHS):
                 model.save("./models/alexnet{0}_{1}".format(count, today))
 
         except Exception as ex:
-            print("Problem on data ",str(i), str(e))
+            print("Problem on data ", str(i), str(e))

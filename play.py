@@ -26,7 +26,7 @@ def main():
 
         if not paused:
             screen = grab_screen(region=(0, 40, 800, 640))
-            screen = tf2_processing.process_image(screen)
+            screen = tf2_processing.process_image(screen, resize=(270, 480))
             prediction = model.predict(screen)
             keys = prediction_to_keys(prediction)
             kb.press(keys)

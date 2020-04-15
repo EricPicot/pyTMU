@@ -4,24 +4,27 @@ import numpy as np
 
 data_path = './tf_dataset/data/'
 target_path = './tf_dataset/target/'
-
-num_datasets = 7
+speed_path = './tf_dataset/speed/'
+num_datasets = 4
 index = 0
 
 # samplig factors
-up_sample = 1 / 5
-nothing_sample = 1 / 2.5
+up_sample = 1 / 3.5
+nothing_sample = 1 / 2
 
 data_final = []
 target_final = []
+speed_final = []
 
 
 
-starting_value = 10
+starting_value = 1
 
 while True:
     file_name = './tf_dataset/balanced_data/data_balanced_{}.npy'.format(starting_value)
     target_file_name = './tf_dataset/balanced_target/target_balanced_{}.npy'.format(starting_value)
+    speed_file_name = './tf_dataset/balanced_speed/speed_balanced_{}.npy'.format(starting_value)
+
 
     if os.path.isfile(file_name):
         print('File exists, moving along', starting_value)
@@ -52,6 +55,8 @@ for data_part in range(1, num_datasets + 1):
 
     data_temp = np.load(data_path + 'training_data-{}.npy'.format(starting_value + data_part))
     target_temp = np.load(target_path + 'target_data-{}.npy'.format(starting_value + data_part))
+    speed_temp = np.load(speed_path + 'target_data-{}.npy'.format(starting_value + data_part))
+
     #
     # shape += len(target)
     for i, t in enumerate(target_temp):
@@ -79,15 +84,20 @@ for data_part in range(1, num_datasets + 1):
     if (data_part == 1) | (len(data_final) == 0):
         data_final = data_temp[final_id]
         target_final = target_temp[final_id]
+        speed_final = speed_temp[final_id]
     else:
         data_final = np.concatenate([data_final, data_temp[final_id]], )
         target_final = np.concatenate([target_final, target_temp[final_id]], )
+        speed_final = np.concatenate([speed_final, speed_temp[final_id]], )
 
     if (len(target_final) > 200)|(data_part == num_datasets):
         print(len(target_final))
         np.save('./tf_dataset/balanced_data/data_balanced_{}.npy'.format(starting_value + index), data_final)
         np.save('./tf_dataset/balanced_target/target_balanced_{}.npy'.format(starting_value + index), target_final)
+        np.save('./tf_dataset/balanced_speed/speed_balanced_{}.npy'.format(starting_value + index), speed_final)
+
         index += 1
         data_final = []
         target_final = []
+        speed_final = []
         print(index)

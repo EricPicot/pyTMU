@@ -1,51 +1,5 @@
-# import numpy as np
-# import tensorflow as tf
-# from tensorflow.keras import activations
-# from tensorflow.keras.layers import *
-#
-# def build_alexnet(width, height, output=9):
-#     inputs = tf.keras.Input(shape=np.array([height, width, 1]).squeeze())
-#
-#     x = Conv2D(96, 11, 4, padding='same')(inputs)
-#     x = BatchNormalization()(x)
-#     x = MaxPooling2D(3, 2)(x)
-#
-#     x = Conv2D(256, 5, 1, padding='same')(x)
-#     x = BatchNormalization()(x)
-#     x = ReLU()(x)
-#     x = MaxPooling2D(3, 2)(x)
-#
-#     x = Conv2D(384, 3, 1, padding='same')(x)
-#     x = BatchNormalization()(x)
-#     x = ReLU()(x)
-#
-#     x = Conv2D(384, 3, 1, padding='same')(x)
-#     x = BatchNormalization()(x)
-#     x = ReLU()(x)
-#
-#     x = Conv2D(256, 3, 1, padding='same')(x)
-#     x = BatchNormalization()(x)
-#     x = ReLU()(x)
-#     x = MaxPooling2D(3, 2)(x)
-#
-#     x = Flatten()(x)
-#
-#     x = Dense(4096)(x)
-#     x = ReLU()(x)
-#     x = Dropout(0.5)(x)
-#     x = Dense(4096)(x)
-#     x = ReLU()(x)
-#     x = activations.tanh(x)
-#     x = Dropout(0.5)(x)
-#
-#     x = Dense(output)(x)
-#     outputs = Softmax()(x)
-#
-#     return tf.keras.Model(inputs, outputs)
-
-
-
 import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
 
 def AlexNet(image_width = 480, image_height = 270, channels = 1, NUM_CLASSES = 9):
     model = tf.keras.Sequential([
@@ -106,4 +60,16 @@ def AlexNet(image_width = 480, image_height = 270, channels = 1, NUM_CLASSES = 9
                               activation=tf.keras.activations.softmax)
     ])
 
+    return model
+
+def digit_model():
+    model = models.Sequential()
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(30, 20, 1)))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dense(10, activation='softmax'))
     return model
