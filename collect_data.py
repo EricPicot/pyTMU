@@ -8,6 +8,7 @@ import tensorflow as tf
 digit_model = tf.keras.models.load_model("./models/digit_model")
 starting_value = 1
 speed_region = (730, 615, 800, 645)
+screen_region = (0, 40, 800, 640)
 
 while True:
     file_name = './tf_dataset/data/training_data-{}.npy'.format(starting_value)
@@ -39,7 +40,7 @@ def main(file_name, target_file_name, starting_value, speed_file_name):
     while True:
 
         if not paused:
-            screen = grab_screen(region=(0, 40, 800, 640))
+            screen = grab_screen(region=screen_region)
             screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)
             speed = grab_screen(region=speed_region)
             speed = cv2.cvtColor(speed, cv2.COLOR_BGR2RGB)

@@ -1,10 +1,8 @@
-import numpy as np
 import keyboard as kb
 import cv2
 import numpy as np
 from PIL import ImageGrab
 import tf2_processing
-import tensorflow as tf
 
 up = [1, 0, 0, 0, 0, 0, 0, 0, 0]
 down = [0, 1, 0, 0, 0, 0, 0, 0, 0]
@@ -84,6 +82,13 @@ def keys_to_output(keys):
         output = nothing
     return output
 
+def transform_target(target):
+    target_list = []
+    for t in target:
+        transformed_target = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        transformed_target[t] = 1
+        target_list.append(transformed_target)
+    return np.array(target_list).reshape((len(target_list), 10))
 
 def speed_numerisation(image, model):
     """
