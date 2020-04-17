@@ -5,8 +5,7 @@ import keyboard as kb
 import tensorflow as tf
 
 import tf2_processing
-from grabscreen import grab_screen
-from utils import prediction_to_keys
+from utils import prediction_to_keys, grab_screen
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 

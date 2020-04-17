@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 
 def read_image(path):
@@ -13,7 +14,6 @@ def resize_and_scale_gray(tf_image, resize, augmentation=False, apply_sobel_bool
 
     tf_image = tf.image.resize(tf_image, resize)
     tf_image = tf.reshape(tf_image, (-1, resize[0], resize[1], 3))
-
     if augmentation:
         tf_image = tf.image.random_brightness(tf_image, max_delta=random.uniform(0, 1))
         tf_image = tf.image.random_saturation(tf_image, lower=0.5, upper=1.5)
@@ -21,6 +21,7 @@ def resize_and_scale_gray(tf_image, resize, augmentation=False, apply_sobel_bool
         tf_image = tf.image.convert_image_dtype(tf_image, dtype=tf.float32)
 
     tf_image_gray = tf.image.rgb_to_grayscale(tf_image)
+    # tf_image_gray = tf.image.adjust_contrast(tf_image_gray, 10)
 
     if apply_sobel_bool:
         return apply_sobel(tf_image_gray, ratio=ratio)
@@ -68,7 +69,7 @@ def process_image(image, resize):
     process an image. There is no need of data augmentation
     """
     image = image / 255
-    im_tensor = resize_and_scale_gray(image, resize, augmentation=False)
+    im_tensor = resize_and_scale_gray(image, resize, augmentation=False, apply_sobel_bool=True)
     im_tensor = tf.image.crop_to_bounding_box(
         im_tensor, offset_height=120, offset_width=0, target_height=150, target_width=480
     )
@@ -105,3 +106,11 @@ def process(data_path, resize, augmentation=False, flipping_data=True):
         im_tensor = flipping_tensor(im_tensor)
 
     return tf.reshape(im_tensor[:, :, :, 0], (-1, resize[0], resize[1], 1))
+
+image = np.load('./tf_dataset/balanced_data/data_balanced_1.npy')[3]
+plt.imshow(image)
+plt.show()
+im = process_image(image, resize=(270, 480))
+print(im.shape)
+plt.imshow(im[0,:,:, 0], cmap="gray")
+plt.show()

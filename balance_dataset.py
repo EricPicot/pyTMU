@@ -6,7 +6,7 @@ data_path = './tf_dataset/data/'
 target_path = './tf_dataset/target/'
 speed_path = './tf_dataset/speed/'
 
-num_datasets = 4
+num_datasets = 2
 index = 0
 
 # samplig factors
@@ -17,7 +17,8 @@ data_final = []
 target_final = []
 speed_final = []
 
-starting_value = 1
+starting_value = 5
+existing_value = 1
 
 while True:
     file_name = './tf_dataset/balanced_data/data_balanced_{}.npy'.format(starting_value)
@@ -37,9 +38,9 @@ def sample(L, factor=1):
     return np.random.choice(L, size=int(np.array(L).shape[0] * factor), replace=False).tolist()
 
 
-for data_part in range(1, num_datasets + 1):
+for data_part in range(0, num_datasets):
     print(data_part)
-
+    print("data_balanced_{}.npy".format(existing_value+data_part))
     up = []
     right = []
     left = []
@@ -51,9 +52,9 @@ for data_part in range(1, num_datasets + 1):
     nothing = []
     shape = []
 
-    data_temp = np.load(data_path + 'training_data-{}.npy'.format(starting_value + data_part))
-    target_temp = np.load(target_path + 'target_data-{}.npy'.format(starting_value + data_part))
-    speed_temp = np.load(speed_path + 'target_data-{}.npy'.format(starting_value + data_part))
+    data_temp = np.load(data_path + 'training_data-{}.npy'.format(existing_value + data_part))
+    target_temp = np.load(target_path + 'target_data-{}.npy'.format(existing_value + data_part))
+    speed_temp = np.load(speed_path + 'target_data-{}.npy'.format(existing_value + data_part))
 
     #
     # shape += len(target)
@@ -88,7 +89,7 @@ for data_part in range(1, num_datasets + 1):
         target_final = np.concatenate([target_final, target_temp[final_id]], )
         speed_final = np.concatenate([speed_final, speed_temp[final_id]], )
 
-    if (len(target_final) > 200) | (data_part == num_datasets):
+    if (len(target_final) > 200) | (data_part == num_datasets-1):
         print(len(target_final))
         np.save('./tf_dataset/balanced_data/data_balanced_{}.npy'.format(starting_value + index), data_final)
         np.save('./tf_dataset/balanced_target/target_balanced_{}.npy'.format(starting_value + index), target_final)
